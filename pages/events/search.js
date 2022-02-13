@@ -25,7 +25,7 @@ export default function SearchPage({ events }) {
 export async function getServerSideProps({ query: { term } }) {
   const query = qs.stringify(
     {
-      fields: ['name', 'date', 'time'],
+      fields: ['name', 'slug', 'date', 'time'],
       populate: 'image',
       sort: ['date'],
       filters: {
