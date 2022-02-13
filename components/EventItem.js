@@ -15,6 +15,16 @@ export default function EventItem({ evt }) {
     },
   } = evt;
 
+  const dateOptions = {
+    format: 'en-US',
+    style: {
+      // weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    },
+  };
+
   const imgScale = 0.7;
 
   return (
@@ -29,7 +39,11 @@ export default function EventItem({ evt }) {
       </div>
       <div className={styles.info}>
         <span>
-          {evt.attributes.date} at {evt.attributes.time}
+          {new Date(evt.attributes.date).toLocaleDateString(
+            dateOptions.format,
+            dateOptions.style
+          )}{' '}
+          at {evt.attributes.time}
         </span>
         <h3>{evt.attributes.name}</h3>
       </div>

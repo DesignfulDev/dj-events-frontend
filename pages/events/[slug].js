@@ -23,6 +23,16 @@ export default function EventPage({ evt }) {
     },
   } = evt;
 
+  const dateOptions = {
+    format: 'en-US',
+    style: {
+      // weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    },
+  };
+
   return (
     <Layout>
       <div className={styles.event}>
@@ -38,7 +48,11 @@ export default function EventPage({ evt }) {
         </div>
 
         <span>
-          {evt.attributes.date} at {evt.attributes.time}
+          {new Date(evt.attributes.date).toLocaleDateString(
+            dateOptions.format,
+            dateOptions.style
+          )}{' '}
+          at {evt.attributes.time}
         </span>
 
         <h1>{evt.attributes.name}</h1>
