@@ -29,6 +29,10 @@ export async function getStaticProps() {
     {
       populate: '*',
       sort: ['date'],
+      pagination: {
+        start: 0,
+        limit: 3,
+      },
     },
     { encodeValuesOnly: true }
   );
