@@ -27,7 +27,8 @@ export default function HomePage({ events }) {
 export async function getStaticProps() {
   const query = qs.stringify(
     {
-      populate: '*',
+      fields: ['name', 'date', 'time'],
+      populate: 'image',
       sort: ['date'],
       pagination: {
         start: 0,

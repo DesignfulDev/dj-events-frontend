@@ -20,7 +20,8 @@ export default function EventsPage({ events }) {
 export async function getStaticProps() {
   const query = qs.stringify(
     {
-      populate: '*',
+      fields: ['name', 'date', 'time'],
+      populate: 'image',
       sort: ['date'],
     },
     { encodeValuesOnly: true }
