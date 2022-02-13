@@ -1,3 +1,4 @@
+import qs from 'qs';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaPencilAlt, FaTimes } from 'react-icons/fa';
@@ -9,6 +10,18 @@ export default function EventPage({ evt }) {
   const deleteEvent = e => {
     console.log('Delete');
   };
+
+  const {
+    attributes: {
+      image: {
+        data: {
+          attributes: {
+            formats: { large: img },
+          },
+        },
+      },
+    },
+  } = evt;
 
   return (
     <Layout>
@@ -25,24 +38,29 @@ export default function EventPage({ evt }) {
         </div>
 
         <span>
-          {evt.date} at {evt.time}
+          {evt.attributes.date} at {evt.attributes.time}
         </span>
 
-        <h1>{evt.name}</h1>
+        <h1>{evt.attributes.name}</h1>
 
-        {evt.image && (
+        {img.url && (
           <div className={styles.image}>
-            <Image src={evt.image} width={960} height={600} alt="DJ jamming" />
+            <Image
+              src={img.url}
+              width={img.width}
+              height={img.height}
+              alt="DJ jamming"
+            />
           </div>
         )}
 
         <h3>Performers:</h3>
-        <p>{evt.performers}</p>
+        <p>{evt.attributes.performers}</p>
         <h3>Description:</h3>
-        <p>{evt.description}</p>
+        <p>{evt.attributes.description}</p>
         <h3>Venue:</h3>
-        <p>{evt.venue}</p>
-        <p>{evt.address}</p>
+        <p>{evt.attributes.venue}</p>
+        <p>{evt.attributes.address}</p>
 
         <Link href="/events">
           <a className={styles.back}>&lt; Go back</a>
@@ -54,10 +72,10 @@ export default function EventPage({ evt }) {
 
 export async function getStaticPaths() {
   const res = await fetch(`${API_URL}/api/events`);
-  const events = await res.json();
+  const { data: events } = await res.json();
 
   const paths = events.map(evt => ({
-    params: { slug: evt.slug },
+    params: { slug: evt.attributes.slug },
   }));
 
   return {
@@ -67,9 +85,21 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { slug } }) {
-  const res = await fetch(`${API_URL}/api/events/${slug}`);
+  const query = qs.stringify(
+    {
+      filters: {
+        slug: {
+          $eq: slug,
+        },
+      },
+      populate: '*',
+    },
+    { encodeValuesOnly: true }
+  );
 
-  const events = await res.json();
+  const res = await fetch(`${API_URL}/api/events?${query}`);
+
+  const { data: events } = await res.json();
 
   return {
     props: {

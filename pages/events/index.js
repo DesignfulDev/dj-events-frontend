@@ -1,3 +1,4 @@
+import qs from 'qs';
 import Layout from '@/components/Layout';
 import EventItem from '@/components/EventItem';
 import { API_URL } from '@/config/index';
@@ -17,8 +18,16 @@ export default function EventsPage({ events }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch(`${API_URL}/api/events`);
-  const events = await res.json();
+  const query = qs.stringify(
+    {
+      populate: '*',
+      sort: ['date'],
+    },
+    { encodeValuesOnly: true }
+  );
+
+  const res = await fetch(`${API_URL}/api/events?${query}`);
+  const { data: events } = await res.json();
 
   return {
     props: { events },

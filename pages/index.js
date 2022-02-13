@@ -1,3 +1,4 @@
+import qs from 'qs';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import EventItem from '@/components/EventItem';
@@ -24,11 +25,19 @@ export default function HomePage({ events }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch(`${API_URL}/api/events`);
-  const events = await res.json();
+  const query = qs.stringify(
+    {
+      populate: '*',
+      sort: ['date'],
+    },
+    { encodeValuesOnly: true }
+  );
+
+  const res = await fetch(`${API_URL}/api/events?${query}`);
+  const { data: events } = await res.json();
 
   return {
-    props: { events: events.slice(0, 3) },
+    props: { events },
     revalidate: 1,
   };
 }
