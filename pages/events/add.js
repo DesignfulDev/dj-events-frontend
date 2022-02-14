@@ -21,7 +21,12 @@ export default function AddEventPage() {
   const handleSubmit = e => {
     e.preventDefault();
 
-    console.log(values);
+    // Validation
+    const hasEmptyFields = Object.values(values).some(el => el === '');
+
+    if (hasEmptyFields) {
+      console.log('Please fill in all fields');
+    }
   };
 
   const handleInputChange = e => {
