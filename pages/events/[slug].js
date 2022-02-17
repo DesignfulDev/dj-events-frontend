@@ -2,14 +2,29 @@ import qs from 'qs';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaPencilAlt, FaTimes } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import Layout from '@/components/Layout';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Event.module.scss';
 import getProperty from '../../utils/getProperty';
+import router from 'next/router';
 
 export default function EventPage({ evt }) {
-  const deleteEvent = e => {
-    console.log('Delete');
+  const deleteEvent = async e => {
+    if (confirm('Are you sure?')) {
+      const res = await fetch(`${API_URL}/api/events/${evt.id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error.message);
+      } else {
+        router.push('/events');
+      }
+    }
   };
 
   const dateOptions = {
@@ -47,6 +62,7 @@ export default function EventPage({ evt }) {
         </span>
 
         <h1>{evt.attributes.name}</h1>
+        <ToastContainer autoClose={3000} theme="colored" />
 
         <div className={styles.image}>
           <Image
