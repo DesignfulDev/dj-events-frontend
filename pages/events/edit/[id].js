@@ -1,23 +1,34 @@
+import qs from 'qs';
 import moment from 'moment';
+import { FaImage } from 'react-icons/fa';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Layout from '@/components/Layout';
 import { API_URL } from '@/config/index';
+import getProperty from '@/utils/getProperty';
 import styles from '@/styles/Form.module.scss';
 
 export default function EditEventPage({ evt }) {
+  const evtDetails = getProperty(evt, 'data.attributes');
+  const img = getProperty(evtDetails, 'image.data');
+
   const [values, setValues] = useState({
-    name: evt.data.attributes.name,
-    venue: evt.data.attributes.venue,
-    address: evt.data.attributes.address,
-    date: evt.data.attributes.date,
-    time: evt.data.attributes.time,
-    performers: evt.data.attributes.performers,
-    description: evt.data.attributes.description,
+    name: evtDetails.name,
+    venue: evtDetails.venue,
+    address: evtDetails.address,
+    date: evtDetails.date,
+    time: evtDetails.time,
+    performers: evtDetails.performers,
+    description: evtDetails.description,
   });
+
+  const [imagePreview, setImagePreview] = useState(
+    img ? img.attributes.formats.thumbnail.url : null
+  );
 
   const router = useRouter();
 
@@ -139,12 +150,39 @@ export default function EditEventPage({ evt }) {
 
         <input className="btn" type="submit" value="Update Event" />
       </form>
+
+      <h3>Event Image</h3>
+      {imagePreview ? (
+        <Image
+          src={imagePreview}
+          height={img ? img.attributes.formats.thumbnail.height : 100}
+          width={img ? img.attributes.formats.thumbnail.width : 170}
+          alt="Event image"
+        />
+      ) : (
+        <div>
+          <p>No image uploaded</p>
+        </div>
+      )}
+
+      <div>
+        <button className="btn-secondary">
+          <FaImage /> Set Image
+        </button>
+      </div>
     </Layout>
   );
 }
 
 export async function getServerSideProps({ params: { id } }) {
-  const res = await fetch(`${API_URL}/api/events/${id}`);
+  const query = qs.stringify(
+    {
+      populate: '*',
+    },
+    { encodeValuesOnly: true }
+  );
+
+  const res = await fetch(`${API_URL}/api/events/${id}?${query}`);
   const evt = await res.json();
 
   return {
