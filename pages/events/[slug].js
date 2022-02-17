@@ -5,23 +5,12 @@ import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import Layout from '@/components/Layout';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Event.module.scss';
+import getProperty from '../../utils/getProperty';
 
 export default function EventPage({ evt }) {
   const deleteEvent = e => {
     console.log('Delete');
   };
-
-  const {
-    attributes: {
-      image: {
-        data: {
-          attributes: {
-            formats: { large: img },
-          },
-        },
-      },
-    },
-  } = evt;
 
   const dateOptions = {
     format: 'en-US',
@@ -32,6 +21,8 @@ export default function EventPage({ evt }) {
       day: '2-digit',
     },
   };
+
+  const img = getProperty(evt, 'attributes.image.data');
 
   return (
     <Layout>
@@ -57,16 +48,18 @@ export default function EventPage({ evt }) {
 
         <h1>{evt.attributes.name}</h1>
 
-        {img.url && (
-          <div className={styles.image}>
-            <Image
-              src={img.url}
-              width={img.width}
-              height={img.height}
-              alt="DJ jamming"
-            />
-          </div>
-        )}
+        <div className={styles.image}>
+          <Image
+            src={
+              img
+                ? img.attributes.formats.large.url
+                : '/images/event-default.png'
+            }
+            width={img ? img.attributes.formats.large.width : 960}
+            height={img ? img.attributes.formats.large.height : 600}
+            alt="DJ jamming"
+          />
+        </div>
 
         <h3>Performers:</h3>
         <p>{evt.attributes.performers}</p>

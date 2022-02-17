@@ -1,20 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/EventItem.module.scss';
+import getProperty from '../utils/getProperty';
 
 export default function EventItem({ evt }) {
-  const {
-    attributes: {
-      image: {
-        data: {
-          attributes: {
-            formats: { thumbnail: img },
-          },
-        },
-      },
-    },
-  } = evt;
-
   const dateOptions = {
     format: 'en-US',
     style: {
@@ -25,18 +14,34 @@ export default function EventItem({ evt }) {
     },
   };
 
-  const imgScale = 0.7;
+  const img = getProperty(evt, 'attributes.image.data');
+
+  const imgScale = 0.9;
 
   return (
     <div className={styles.event}>
       <div className={styles.img}>
         <Image
-          src={img.url ? img.url : '/images/event-default.png'}
-          width={img.width * imgScale}
-          height={img.height * imgScale}
+          src={
+            img
+              ? img.attributes.formats.thumbnail.url
+              : '/images/event-default.png'
+          }
+          width={
+            img
+              ? img.attributes.formats.thumbnail.width * imgScale
+              : 164 * imgScale
+          }
+          height={
+            img
+              ? img.attributes.formats.thumbnail.height * imgScale
+              : 110 * imgScale
+          }
           alt="DJ jamming"
+          priority={true}
         />
       </div>
+
       <div className={styles.info}>
         <span>
           {new Date(evt.attributes.date).toLocaleDateString(
