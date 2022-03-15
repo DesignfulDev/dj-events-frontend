@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Layout from '@/components/Layout';
+import Modal from '@/components/Modal';
 import { API_URL } from '@/config/index';
 import getProperty from '@/utils/getProperty';
 import styles from '@/styles/Form.module.scss';
@@ -29,6 +30,8 @@ export default function EditEventPage({ evt }) {
   const [imagePreview, setImagePreview] = useState(
     img ? img.attributes.formats.thumbnail.url : null
   );
+
+  const [showModal, setShotModal] = useState(false);
 
   const router = useRouter();
 
@@ -166,10 +169,14 @@ export default function EditEventPage({ evt }) {
       )}
 
       <div>
-        <button className="btn-secondary">
+        <button className="btn-secondary" onClick={() => setShotModal(true)}>
           <FaImage /> Set Image
         </button>
       </div>
+
+      <Modal show={showModal} onClose={() => setShotModal(false)}>
+        IMAGE UPLOAD
+      </Modal>
     </Layout>
   );
 }
