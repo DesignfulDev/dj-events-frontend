@@ -72,7 +72,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          <input type="submit" value="Login" className="btn" />
+          <input type="submit" value="Register" className="btn" />
 
           <p>
             Already have an account? <Link href="/account/login">Login</Link>
