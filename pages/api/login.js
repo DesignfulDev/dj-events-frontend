@@ -18,8 +18,6 @@ const login = async (req, res) => {
 
     const data = await strapiRes.json();
 
-    console.log(data);
-
     if (strapiRes.ok) {
       // Set cookie
 
