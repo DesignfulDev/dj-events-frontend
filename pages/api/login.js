@@ -20,7 +20,6 @@ const login = async (req, res) => {
 
     if (strapiRes.ok) {
       // Set cookie
-
       res.setHeader(
         'Set-Cookie',
         cookie.serialize('token', data.jwt, {
