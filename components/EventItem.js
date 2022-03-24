@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/EventItem.module.scss';
-import getProperty from '../utils/getProperty';
+import getProperty from '@/utils/getProperty';
 
 export default function EventItem({ evt }) {
   const dateOptions = {

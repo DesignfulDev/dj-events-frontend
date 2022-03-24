@@ -2,6 +2,7 @@ import Layout from '@/components/Layout';
 import parseCookies from '@/utils/parseCookies';
 import { API_URL } from '@/config/index';
 import DashboardEvent from '@/components/DashboardEvent';
+import getProperty from '@/utils/getProperty';
 import styles from '@/styles/Dashboard.module.scss';
 
 export default function DashboardPage({ events }) {
@@ -16,9 +17,11 @@ export default function DashboardPage({ events }) {
         <h3>My Events</h3>
 
         {events.map(evt => (
-          <DashboardEvent key={evt.id} evt={evt} handleDelete={deleteEvent}>
-            {evt.name}
-          </DashboardEvent>
+          <DashboardEvent
+            key={evt.id}
+            evt={evt}
+            handleDelete={deleteEvent}
+          ></DashboardEvent>
         ))}
       </div>
     </Layout>
@@ -35,7 +38,10 @@ export async function getServerSideProps({ req }) {
     },
   });
 
-  const events = await res.json();
+  const data = await res.json();
+
+  // Extract events array
+  const events = getProperty(data, 'data.attributes.data');
 
   return {
     props: {
