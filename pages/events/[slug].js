@@ -1,32 +1,14 @@
 import qs from 'qs';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Layout from '@/components/Layout';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Event.module.scss';
 import getProperty from '../../utils/getProperty';
-import router from 'next/router';
 
 export default function EventPage({ evt }) {
-  const deleteEvent = async e => {
-    if (confirm('Are you sure?')) {
-      const res = await fetch(`${API_URL}/api/events/${evt.id}`, {
-        method: 'DELETE',
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.error.message);
-      } else {
-        router.push('/events');
-      }
-    }
-  };
-
   const dateOptions = {
     format: 'en-US',
     style: {
@@ -42,17 +24,6 @@ export default function EventPage({ evt }) {
   return (
     <Layout>
       <div className={styles.event}>
-        <div className={styles.controls}>
-          <Link href={`/events/edit/${evt.id}`}>
-            <a>
-              <FaPencilAlt /> Edit Event
-            </a>
-          </Link>
-          <a href="#" className={styles.delete} onClick={deleteEvent}>
-            <FaTimes /> Delete Evente
-          </a>
-        </div>
-
         <span>
           {new Date(evt.attributes.date).toLocaleDateString(
             dateOptions.format,
