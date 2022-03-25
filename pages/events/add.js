@@ -3,11 +3,12 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import parseCookies from '@/utils/parseCookies';
 import Layout from '@/components/Layout';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Form.module.scss';
 
-export default function AddEventPage() {
+export default function AddEventPage({ token }) {
   const [values, setValues] = useState({
     name: '',
     venue: '',
@@ -34,14 +35,18 @@ export default function AddEventPage() {
 
     const res = await fetch(`${API_URL}/api/events`, {
       method: 'POST',
-      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ data: values }),
     });
 
     if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        toast.error('Authorization token is missing');
+        return;
+      }
       toast.error('Something went wrong.');
     } else {
       const evt = await res.json();
@@ -140,4 +145,15 @@ export default function AddEventPage() {
       </form>
     </Layout>
   );
+}
+
+export async function getServerSideProps({ req }) {
+  const { token } = parseCookies(req);
+  console.log(token);
+
+  return {
+    props: {
+      token,
+    },
+  };
 }
