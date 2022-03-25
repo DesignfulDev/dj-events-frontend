@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import parseCookies from '@/utils/parseCookies';
 import Layout from '@/components/Layout';
 import Modal from '@/components/Modal';
 import ImageUpload from '@/components/ImageUpload';
@@ -14,7 +15,7 @@ import { API_URL } from '@/config/index';
 import getProperty from '@/utils/getProperty';
 import styles from '@/styles/Form.module.scss';
 
-export default function EditEventPage({ evt }) {
+export default function EditEventPage({ evt, token }) {
   const evtDetails = getProperty(evt, 'data.attributes');
   const img = getProperty(evtDetails, 'image.data');
 
@@ -53,11 +54,17 @@ export default function EditEventPage({ evt }) {
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ data: values }),
     });
 
     if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        toast.error('Unauthorized');
+        return;
+      }
+
       toast.error('Something went wrong.');
     } else {
       const evt = await res.json();
@@ -200,14 +207,15 @@ export async function getServerSideProps({ params: { id }, req }) {
     { encodeValuesOnly: true }
   );
 
+  const { token } = parseCookies(req);
+
   const res = await fetch(`${API_URL}/api/events/${id}?${query}`);
   const evt = await res.json();
-
-  console.log(req.headers.cookie);
 
   return {
     props: {
       evt,
+      token,
     },
   };
 }
