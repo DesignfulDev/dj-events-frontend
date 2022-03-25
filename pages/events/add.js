@@ -35,6 +35,7 @@ export default function AddEventPage({ token }) {
 
     const res = await fetch(`${API_URL}/api/events`, {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -44,7 +45,7 @@ export default function AddEventPage({ token }) {
 
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        toast.error('Authorization token is missing');
+        toast.error('Unauthorized');
         return;
       }
       toast.error('Something went wrong.');
@@ -149,7 +150,6 @@ export default function AddEventPage({ token }) {
 
 export async function getServerSideProps({ req }) {
   const { token } = parseCookies(req);
-  console.log(token);
 
   return {
     props: {
