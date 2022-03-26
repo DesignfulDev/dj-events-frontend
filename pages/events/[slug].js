@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Layout from '@/components/Layout';
+import EventMap from '@/components/EventMap';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Event.module.scss';
 import getProperty from '../../utils/getProperty';
@@ -55,6 +56,8 @@ export default function EventPage({ evt }) {
         <h3>Venue:</h3>
         <p>{evt.attributes.venue}</p>
         <p>{evt.attributes.address}</p>
+
+        <EventMap evt={evt} />
 
         <Link href="/events">
           <a className={styles.back}>&lt; Go back</a>
