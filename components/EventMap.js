@@ -43,7 +43,7 @@ export default function EventMap({ evt }) {
         console.error(error);
       }
     );
-  }, []);
+  }, [evt]);
 
   return isLoaded ? (
     <GoogleMap
